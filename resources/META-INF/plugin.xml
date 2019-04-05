@@ -1,0 +1,38 @@
+<idea-plugin>
+  <id>com.trinite.dalian.zn.plugin.jira</id>
+  <name>Jira Issue Show</name>
+  <version>1.0</version>
+  <vendor email="619232906@qq.com">Trinite</vendor>
+
+  <description>It will show jira issue,comment,author,time and so on. it will support reply maybe.</description>
+
+  <change-notes>
+    1.0: It will show jira issue,comment,author,time and so on. it will support reply maybe
+  </change-notes>
+
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="173.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+    <projectConfigurable instance="com.InputJira"/>
+    <applicationService serviceInterface="com.JiraSetting" serviceImplementation="com.JiraSetting"/>
+    <toolWindow anchor="right" canCloseContents="false" id="Show Jira Issue" factoryClass="com.ShowIssue"/>
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="com.zn.jira" class="com.Login" text="Login" description="Login">
+      <add-to-group group-id="MainToolBar" anchor="after" relative-to-action="tasks.toolbar.group"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="shift alt W"/>
+    </action>
+  </actions>
+
+</idea-plugin>
