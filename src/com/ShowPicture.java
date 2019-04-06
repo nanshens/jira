@@ -74,7 +74,7 @@ public class ShowPicture{
 				PicLabel.setIcon(new ImageIcon(image));
 			} catch (Exception e) {
 				PicLabel.setIcon(new ImageIcon());
-				PicLabel.setText("这个附件不是图片");
+				PicLabel.setText("<html><h1>这个附件不是图片</h1></html>");
 			}
 		}
 		PicNum.setText("<html>" + (picIndex) + "<br>/<br>" + pictures.size() + "</html>");
