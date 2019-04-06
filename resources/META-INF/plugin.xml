@@ -29,10 +29,6 @@
 
   <actions>
     <!-- Add your actions here -->
-    <action id="com.zn.jira" class="com.Login" text="Login" description="Login">
-      <add-to-group group-id="MainToolBar" anchor="after" relative-to-action="tasks.toolbar.group"/>
-      <keyboard-shortcut keymap="$default" first-keystroke="shift alt W"/>
-    </action>
-  </actions>
+      </actions>
 
 </idea-plugin>

@@ -23,7 +23,7 @@ public class ShowPicture{
 	private JScrollPane Pic;
 	private JLabel PicLabel;
 	private Map<String, String> pictures;
-	private int picIndex = 0;
+	private int picIndex = 1;
 	private JiraRestClient client;
 	private List<String> pics;
 
@@ -41,35 +41,43 @@ public class ShowPicture{
 		this.client = client;
 		pics = new ArrayList<>();
 		pictures.forEach((k,v) -> pics.add(v));
-		initPicture(picIndex);
+		initPicture();
 		initListener();
-		PicNum.setText(pictures.size() + "");
+		PicNum.setText("<html>" + (picIndex) + "<br>/<br>" + pictures.size() + "</html>");
 	}
 
 	private void initListener() {
 		ActionListener upListener = e -> {
-			initPicture(picIndex --);
-			System.out.println("+");
+			picIndex--;
+			initPicture();
 		};
 
 		ActionListener downListener = e -> {
-			initPicture(picIndex ++);
-			System.out.println("-");
+			picIndex++;
+			initPicture();
 		};
 
 		up.addActionListener(upListener);
 		down.addActionListener(downListener);
 	}
 
-	private void initPicture(int index) {
-		BufferedImage image = null;
-		try {
-			InputStream stream = client.getIssueClient().getAttachment(new URI(getPicUrl(index))).get();
-			image = ImageIO.read(stream);
-			PicLabel.setIcon(new ImageIcon(image));
-		} catch (Exception e) {
-			System.out.println("picture url error");
+	private void initPicture() {
+		if (picIndex < 1) {
+			picIndex = 1;
+		} else if (picIndex > pics.size()) {
+			picIndex = pics.size();
+		} else {
+			BufferedImage image = null;
+			try {
+				InputStream stream = client.getIssueClient().getAttachment(new URI(getPicUrl(picIndex - 1))).get();
+				image = ImageIO.read(stream);
+				PicLabel.setIcon(new ImageIcon(image));
+			} catch (Exception e) {
+				PicLabel.setIcon(new ImageIcon());
+				PicLabel.setText("这个附件不是图片");
+			}
 		}
+		PicNum.setText("<html>" + (picIndex) + "<br>/<br>" + pictures.size() + "</html>");
 	}
 
 	private String getPicUrl(int index) {

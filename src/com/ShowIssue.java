@@ -61,24 +61,20 @@ public class ShowIssue implements ToolWindowFactory {
 	private void initListener() {
 		ActionListener loginListener = e -> {
 			issue.setText("");
-			StringBuffer content = new StringBuffer();
 			String issueNumberText = issueNumber.getText();
 			String userText = projectNumber.getSelectedItem().toString();
 			Issue issueAll = JiraUtils.getIssueByKey(client, userText + "-" + issueNumberText);
-//			content.append("Title:\n")
-//					.append(issueAll.getSummary())
-//					.append("\n\nDescription:\n")
-//					.append(issueAll.getDescription())
-//					.append("\n\nComments:\n")
-//					.append(JiraUtils.issueCommentsString(issueAll));
-//			issue.setText(content.toString());
-			issueAddString("Title:\n", true);
-			issueAddString(issueAll.getSummary(), false);
-			issueAddString("\nDescription:\n", true);
-			issueAddString(issueAll.getDescription(), false);
-			issueAddString("\nComments:\n", true);
-			issueAddString(JiraUtils.issueCommentsString(issueAll), false);
-			pictures = JiraUtils.getIssuePhotos(issueAll);
+			if (issueAll == null) {
+				issueAddString("没有此Issue", true);
+			}else {
+				issueAddString("Title:\n", true);
+				issueAddString(issueAll.getSummary(), false);
+				issueAddString("\nDescription:\n", true);
+				issueAddString(issueAll.getDescription(), false);
+				issueAddString("\nComments:\n", true);
+				issueAddString(JiraUtils.issueCommentsString(issueAll), false);
+				pictures = JiraUtils.getIssuePhotos(issueAll);
+			}
 		};
 
 		ActionListener pictureListener = e -> {
@@ -109,7 +105,7 @@ public class ShowIssue implements ToolWindowFactory {
 		try {
 			issue.getDocument().insertString(issue.getDocument().getLength(), content, issue.getStyle(b));
 		}catch (Exception e) {
-			System.out.println("issuecontent error");
+			System.out.println("issuecontentError");
 		}
 	}
 }

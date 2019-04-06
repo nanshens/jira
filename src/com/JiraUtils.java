@@ -26,23 +26,23 @@ import java.util.stream.Collectors;
  */
 public class JiraUtils {
 
-	public static void main(String[] args) {
-		try {
-			JiraRestClient client = getJiraClient("", "", "");
-//			getAllProjects(client);
-			InputStream stream = client.getIssueClient().getAttachment(new URI("")).get();
-
-			Issue issue = getIssueByKey(client, "GLD-973");
-
-//			System.out.println(issue);
-//			Promise<SearchResult> searchResultPromise = client.getSearchClient().searchJql("screenshot-1.png");
-//			System.out.println(getIssueComments(issue));
-			System.out.println(getIssuePhotos(issue));
-
-		}catch (Exception e) {
-			System.out.println("jira error");
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			JiraRestClient client = getJiraClient("", "", "");
+////			getAllProjects(client);
+//			InputStream stream = client.getIssueClient().getAttachment(new URI("")).get();
+//
+//			Issue issue = getIssueByKey(client, "GLD-973");
+//
+////			System.out.println(issue);
+////			Promise<SearchResult> searchResultPromise = client.getSearchClient().searchJql("screenshot-1.png");
+////			System.out.println(getIssueComments(issue));
+//			System.out.println(getIssuePhotos(issue));
+//
+//		}catch (Exception e) {
+//			System.out.println("jira error");
+//		}
+//	}
 
 
 	public static List<BasicProject> getAllProjects(JiraRestClient client) throws Exception {
@@ -56,7 +56,7 @@ public class JiraUtils {
 			issuePromise = client.getIssueClient().getIssue(issueKey);
 			return issuePromise.get();
 		}catch (Exception e) {
-			System.out.println("getIssueByKey");
+			System.out.println("getIssueByKeyError");
 		}
 		return null;
 	}
@@ -66,7 +66,7 @@ public class JiraUtils {
 		Map<String, String> photos = new HashMap<>();
 		while (issueAttachments.hasNext()) {
 			Attachment attachment= issueAttachments.next();
-			System.out.println(attachment);
+//			System.out.println(attachment.getFilename());
 			photos.put(attachment.getFilename(), attachment.getContentUri().toString());
 		}
 		return photos;
@@ -83,9 +83,7 @@ public class JiraUtils {
 			AsynchronousJiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
 			client = jiraRestClientFactory.createWithBasicHttpAuthentication(new URI(host), user,password);
 		} catch (URISyntaxException e) {
-			System.out.println("host error");
-//		} catch (LinkageError error) {
-//			System.out.println("log4j error");
+			System.out.println("hostError");
 		}
 		return client;
 	}
@@ -94,7 +92,7 @@ public class JiraUtils {
 		try {
 			return getAllProjects(client).stream().map(project -> project.getKey()).collect(Collectors.toList());
 		}catch (Exception e) {
-			System.out.println("getAllProjects");
+			System.out.println("getAllProjectsError");
 		}
 
 		return null;
