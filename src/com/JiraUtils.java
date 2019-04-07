@@ -55,24 +55,24 @@ public class JiraUtils {
 		try {
 			issuePromise = client.getIssueClient().getIssue(issueKey);
 			return issuePromise.get();
-		}catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("getIssueByKeyError");
 		}
 		return null;
 	}
 
-	public static Map<String, String> getIssuePhotos (Issue issue) {
+	public static Map<String, String> getIssuePhotos(Issue issue) {
 		Iterator<Attachment> issueAttachments = issue.getAttachments().iterator();
 		Map<String, String> photos = new HashMap<>();
 		while (issueAttachments.hasNext()) {
-			Attachment attachment= issueAttachments.next();
+			Attachment attachment = issueAttachments.next();
 //			System.out.println(attachment.getFilename());
 			photos.put(attachment.getFilename(), attachment.getContentUri().toString());
 		}
 		return photos;
 	}
 
-	public static List<Comment> getIssueComments (Issue issue) {
+	public static List<Comment> getIssueComments(Issue issue) {
 		//comment.getbody.getauthor
 		return IteratorUtils.toList(issue.getComments().iterator());
 	}
@@ -81,7 +81,7 @@ public class JiraUtils {
 		JiraRestClient client = null;
 		try {
 			AsynchronousJiraRestClientFactory jiraRestClientFactory = new AsynchronousJiraRestClientFactory();
-			client = jiraRestClientFactory.createWithBasicHttpAuthentication(new URI(host), user,password);
+			client = jiraRestClientFactory.createWithBasicHttpAuthentication(new URI(host), user, password);
 		} catch (URISyntaxException e) {
 			System.out.println("hostError");
 		}
@@ -91,7 +91,7 @@ public class JiraUtils {
 	public static List<String> getAllProjectsKey(JiraRestClient client) {
 		try {
 			return getAllProjects(client).stream().map(project -> project.getKey()).collect(Collectors.toList());
-		}catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("getAllProjectsError");
 		}
 

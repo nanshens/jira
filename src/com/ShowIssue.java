@@ -7,16 +7,11 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import org.apache.xmlgraphics.image.loader.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -34,15 +29,20 @@ public class ShowIssue implements ToolWindowFactory {
 	private static JiraRestClient client;
 	private Map<String, String> pictures = new HashMap<>();
 
-	public static void reLogin() {
-		JiraSettingState setting = JiraSetting.getInstance().getState();
+	public static void reLogin(JiraSettingState setting) {
 		client = JiraUtils.getJiraClient(setting.getHost(), setting.getUser(), setting.getPassword());
 	}
+
 	@Override
 	public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 		ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-		Content content = contentFactory.createContent(showIssue,"", false);
-		reLogin();
+		Content content = contentFactory.createContent(showIssue, "", false);
+		JiraSettingState setting = JiraSetting.getInstance().getState();
+		if (setting == null) {
+			issue.setText("<html><h1>请登录</h1></html>");
+		} else {
+			reLogin(setting);
+		}
 		initProjectNumber();
 		initListener();
 		addStyle();
@@ -64,9 +64,11 @@ public class ShowIssue implements ToolWindowFactory {
 			String issueNumberText = issueNumber.getText();
 			String userText = projectNumber.getSelectedItem().toString();
 			Issue issueAll = JiraUtils.getIssueByKey(client, userText + "-" + issueNumberText);
-			if (issueAll == null) {
+			if (client == null) {
+				issueAddString("没有登录", true);
+			} else if (issueAll == null) {
 				issueAddString("没有此Issue", true);
-			}else {
+			} else {
 				issueAddString("Title:\n", true);
 				issueAddString(issueAll.getSummary(), false);
 				issueAddString("\nDescription:\n", true);
@@ -104,7 +106,7 @@ public class ShowIssue implements ToolWindowFactory {
 		String b = bold ? "bold" : "normal";
 		try {
 			issue.getDocument().insertString(issue.getDocument().getLength(), content, issue.getStyle(b));
-		}catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("issuecontentError");
 		}
 	}

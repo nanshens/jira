@@ -16,12 +16,13 @@ import java.awt.event.ActionListener;
 /**
  * @author zn
  */
-public class InputJira implements SearchableConfigurable, Configurable.NoScroll{
+public class InputJira implements SearchableConfigurable, Configurable.NoScroll {
 	private JPanel panel1;
 	private JTextField host;
 	private JTextField user;
 	private JPasswordField password;
 	private JButton login;
+
 	public JPanel getPanel1() {
 		return panel1;
 	}
@@ -133,7 +134,7 @@ public class InputJira implements SearchableConfigurable, Configurable.NoScroll{
 			String userText = user.getText();
 			String passwordText = String.valueOf(password.getPassword());
 			JiraSetting.getInstance().loadState(new JiraSettingState(hostText, userText, passwordText));
-			ShowIssue.reLogin();
+			ShowIssue.reLogin(JiraSetting.getInstance().getState());
 		};
 		login.addActionListener(loginListener);
 	}
