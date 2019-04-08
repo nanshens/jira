@@ -45,21 +45,30 @@ public class ShowIssue implements ToolWindowFactory {
 		}
 		initProjectNumber();
 		initListener();
-		addStyle();
+//		addStyle();
 		toolWindow.getContentManager().addContent(content);
 	}
 
 	private void initProjectNumber() {
-		projectNumber.addItem("GLD");
-		projectNumber.addItem("TAM");
-		projectNumber.addItem("FE");
-		projectNumber.addItem("MIM");
-		projectNumber.addItem("AER");
-		projectNumber.addItem("TNT");
+
+		if (client == null) {
+			projectNumber.addItem("GLD");
+			projectNumber.addItem("TAM");
+			projectNumber.addItem("FE");
+			projectNumber.addItem("MIM");
+			projectNumber.addItem("AER");
+			projectNumber.addItem("TNT");
+		} else {
+			for (String pro : JiraUtils.getAllProjectsKey(client)) {
+				projectNumber.addItem(pro);
+			}
+		}
+
 	}
 
 	private void initListener() {
 		ActionListener loginListener = e -> {
+			addStyle();
 			issue.setText("");
 			String issueNumberText = issueNumber.getText();
 			String userText = projectNumber.getSelectedItem().toString();
@@ -89,15 +98,18 @@ public class ShowIssue implements ToolWindowFactory {
 	}
 
 	private void addStyle() {
+		JiraSettingState setting = JiraSetting.getInstance().getState();
 		Style def = issue.getStyledDocument().addStyle(null, null);
-		StyleConstants.setFontFamily(def, "family");
-		StyleConstants.setFontSize(def, 14);
-		StyleConstants.setForeground(def, Color.lightGray);
+		StyleConstants.setFontFamily(def,"family");
+		StyleConstants.setFontSize(def, setting.getContentSize());
+//		StyleConstants.setForeground(def, Color.lightGray);
+		StyleConstants.setForeground(def, Color.decode(setting.getContentColor()));
 		Style normal = issue.addStyle("normal", def);
 		Style s = issue.addStyle("bold", normal);
-		StyleConstants.setForeground(s, Color.ORANGE);
+//		StyleConstants.setForeground(s, Color.ORANGE);
+		StyleConstants.setForeground(s, Color.decode(setting.getTitleColor()));
 		StyleConstants.setBold(s, true);
-		StyleConstants.setFontSize(s, 16);
+		StyleConstants.setFontSize(s, setting.getTitleSize());
 		issue.setParagraphAttributes(normal, true);
 
 	}

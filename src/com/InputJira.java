@@ -5,6 +5,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.util.ui.ColorIcon;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,17 @@ public class InputJira implements SearchableConfigurable, Configurable.NoScroll 
 	private JTextField user;
 	private JPasswordField password;
 	private JButton login;
+	private JComboBox titleFont;
+	private JComboBox contentFont;
+	private JColorChooser colorSelect;
+	private JRadioButton titleBtn;
+	private JRadioButton contentBtn;
+	private JLabel contentColorShow;
+	private JLabel titleColorShow;
+	private ButtonGroup colorBtnGroup;
+
+	private Color contentColor;
+	private Color titleColor;
 
 	public JPanel getPanel1() {
 		return panel1;
@@ -123,17 +135,21 @@ public class InputJira implements SearchableConfigurable, Configurable.NoScroll 
 	@Nullable
 	@Override
 	public JComponent createComponent() {
+		initFontSizeSelect();
 		initSettingState();
 		initListener();
 		return panel1;
 	}
 
+	public void initFontSizeSelect() {
+		for (int i = 10; i < 31; i++) {
+			titleFont.addItem(i);
+			contentFont.addItem(i);
+		}
+	}
 	private void initListener() {
 		ActionListener loginListener = e -> {
-			String hostText = host.getText();
-			String userText = user.getText();
-			String passwordText = String.valueOf(password.getPassword());
-			JiraSetting.getInstance().loadState(new JiraSettingState(hostText, userText, passwordText));
+			loadSetting();
 			ShowIssue.reLogin(JiraSetting.getInstance().getState());
 		};
 		login.addActionListener(loginListener);
@@ -144,15 +160,50 @@ public class InputJira implements SearchableConfigurable, Configurable.NoScroll 
 		host.setText(jiraSettingState.getHost());
 		user.setText(jiraSettingState.getUser());
 		password.setText(jiraSettingState.getPassword());
+		titleFont.setSelectedItem(jiraSettingState.getTitleSize());
+		contentFont.setSelectedItem(jiraSettingState.getContentSize());
+
+		titleColor = Color.decode(jiraSettingState.getTitleColor());
+		contentColor = Color.decode(jiraSettingState.getContentColor());
+
+		titleBtn.setSelected(true);
+		colorSelect.setColor(titleColor);
+		titleColorShow.setIcon(new ColorIcon(30, titleColor));
+		contentColorShow.setIcon(new ColorIcon(30, contentColor));
 	}
 
 	@Override
 	public boolean isModified() {
-		return false;
+		//compare state and label return true or false
+		setColor();
+		return true;
+	}
+
+	private void setColor() {
+		Color temp = colorSelect.getColor();
+		if (titleBtn.isSelected()) {
+			titleColor = temp;
+			titleColorShow.setIcon(new ColorIcon(30, temp));
+		}else {
+			contentColor = temp;
+			contentColorShow.setIcon(new ColorIcon(30, temp));
+		}
 	}
 
 	@Override
 	public void apply() throws ConfigurationException {
+		//save conf
+		loadSetting();
+	}
 
+	private void loadSetting() {
+		String titColorStr = titleColor.getRGB() + "";
+		String contColorStr = contentColor.getRGB() + "";
+		String hostText = host.getText();
+		String userText = user.getText();
+		String passwordText = String.valueOf(password.getPassword());
+		int titleSize = Integer.parseInt(titleFont.getSelectedItem().toString());
+		int contentSize = Integer.parseInt(contentFont.getSelectedItem().toString());
+		JiraSetting.getInstance().loadState(new JiraSettingState(hostText, userText, passwordText,titleSize, contentSize, titColorStr, contColorStr));
 	}
 }
