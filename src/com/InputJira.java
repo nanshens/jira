@@ -163,8 +163,8 @@ public class InputJira implements SearchableConfigurable, Configurable.NoScroll 
 		titleFont.setSelectedItem(jiraSettingState.getTitleSize());
 		contentFont.setSelectedItem(jiraSettingState.getContentSize());
 
-		titleColor = Color.decode(jiraSettingState.getTitleColor());
-		contentColor = Color.decode(jiraSettingState.getContentColor());
+		titleColor = Color.decode(jiraSettingState.getTitleColor() == null ? "-1" : jiraSettingState.getTitleColor());
+		contentColor = Color.decode(jiraSettingState.getContentColor() == null ? "-1" : jiraSettingState.getContentColor());
 
 		titleBtn.setSelected(true);
 		colorSelect.setColor(titleColor);
